@@ -383,9 +383,14 @@ body {
 }
 
 .dress-card__icon {
-  font-size: 1.25rem;
   color: var(--rose-deep);
   margin-bottom: var(--space-sm);
+}
+
+.dress-card__svg {
+  display: block;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 
 .dress-card__name {

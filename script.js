@@ -8,8 +8,8 @@
    ========================================================================== */
 
 const PRODUCTION_UNLOCK = {
-  dressCodeUnlock: "2026-06-04T08:00:00",
-  birthdayDate: "2026-06-15",
+  dressCodeUnlock: "2026-06-04T10:00:00",
+  birthdayDate: "2026-06-05",
 };
 
 const CONFIG = {
@@ -27,7 +27,7 @@ const CONFIG = {
    * Cuando termines, pon enabled: false para volver a producción.
    */
   testMinuteUnlock: {
-    enabled: true,
+    enabled: false,
     start: "2026-06-04T00:54:00",
     intervalMinutes: 1,
   },
