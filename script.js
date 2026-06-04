@@ -28,7 +28,7 @@ const CONFIG = {
    */
   testMinuteUnlock: {
     enabled: true,
-    start: "2026-06-04T00:45:00",
+    start: "2026-06-04T00:54:00",
     intervalMinutes: 1,
   },
 
