@@ -926,20 +926,45 @@ body {
 .timeline__item {
   position: relative;
   padding-bottom: var(--space-lg);
-  opacity: 0.28;
-  transform: translateX(-8px);
-  filter: saturate(0.85);
   transition:
-    opacity 0.6s var(--ease-out),
-    transform 0.6s var(--ease-out),
-    filter 0.6s var(--ease-out);
+    opacity 0.55s var(--ease-out),
+    transform 0.55s var(--ease-out);
 }
 
-.timeline__item.is-unlocked,
-.timeline__item.is-visible {
-  opacity: 1;
-  transform: translateX(0);
+.timeline__item--pending .timeline__time,
+.timeline__item--pending .timeline__card {
+  filter: blur(7px);
+  opacity: 0.45;
+  user-select: none;
+  pointer-events: none;
+  transition:
+    filter 0.6s var(--ease-out),
+    opacity 0.6s var(--ease-out);
+}
+
+.timeline__item--pending .timeline__dot {
+  border-color: var(--purple-soft);
+  box-shadow: 0 0 0 4px rgba(201, 184, 232, 0.25);
+}
+
+.timeline__item.is-unlocked .timeline__time,
+.timeline__item.is-unlocked .timeline__card {
   filter: none;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.timeline__item.is-unlocked {
+  animation: timelineItemReveal 0.65s var(--ease-out) forwards;
+}
+
+@keyframes timelineItemReveal {
+  from {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 .timeline__item:last-child {

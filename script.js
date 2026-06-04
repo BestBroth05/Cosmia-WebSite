@@ -442,11 +442,12 @@ function revealSection(id, { animate = true, notify = true } = {}) {
 
   initSectionContent(id);
   updateProgressBar();
-  if (id === "activities") checkTimelineUnlocks();
+  if (id === "activities") prepareTimelinePreview();
+  revealTimelineForSection(id);
   if (notify && isTimeLockActive()) {
     showUnlockToast(CONFIG.sectionLabels[id] || id);
   }
-  observeScrollReveals(el);
+  observeScrollReveals(el, { excludeTimeline: id === "activities" });
 }
 
 function unlockSection(id) {
@@ -467,33 +468,58 @@ function checkUnlocks() {
     }
   }
 
-  checkTimelineUnlocks();
+  syncTimelineToUnlockedSections();
   updateProgressBar();
 }
 
-function getActivityUnlockTime(item) {
-  if (isTestMinuteMode() && item.sectionId) {
-    const entry = schedule.find((e) => e.id === item.sectionId);
-    if (entry) return entry.unlockTime;
-  }
-  return `${CONFIG.birthdayDate}T${parseTime12hToHms(item.time)}`;
+/** Al abrir "El plan", todos los puntos visibles con blur hasta su hora */
+function prepareTimelinePreview() {
+  document.querySelectorAll("#timeline .timeline__item").forEach((li) => {
+    li.classList.add("timeline__item--pending");
+    li.classList.remove("is-unlocked", "is-visible");
+    li.setAttribute("aria-hidden", "false");
+  });
 }
 
-function checkTimelineUnlocks() {
+/** Quita el blur del punto ligado a la sección desbloqueada */
+function revealTimelineForSection(sectionId) {
+  const items = document.querySelectorAll("#timeline .timeline__item");
+  if (!items.length) return;
+
+  ACTIVITIES.forEach((activity, index) => {
+    if (activity.sectionId !== sectionId) return;
+    const li = items[index];
+    if (!li) return;
+
+    li.classList.remove("timeline__item--pending");
+    li.classList.add("is-unlocked", "is-visible");
+    li.setAttribute("aria-hidden", "false");
+  });
+}
+
+function revealAllTimelineItems() {
+  document.querySelectorAll("#timeline .timeline__item").forEach((li) => {
+    li.classList.remove("timeline__item--pending");
+    li.classList.add("is-unlocked", "is-visible");
+    li.setAttribute("aria-hidden", "false");
+  });
+}
+
+function syncTimelineToUnlockedSections() {
   if (!CONFIG.enableTimeLock || isDebug || forceBirthday) {
-    document.querySelectorAll(".timeline__item").forEach((item) => {
-      item.classList.add("is-unlocked");
-    });
+    revealAllTimelineItems();
     return;
   }
 
   if (!unlockedIds.has("activities")) return;
 
-  const now = getNowInScheduleTz();
-  document.querySelectorAll(".timeline__item[data-unlock-at]").forEach((item) => {
-    const unlockAt = parseScheduleDateTime(item.dataset.unlockAt);
-    if (now >= unlockAt) {
-      item.classList.add("is-unlocked", "is-visible");
+  document.querySelectorAll("#timeline .timeline__item").forEach((li, index) => {
+    const sectionId = ACTIVITIES[index]?.sectionId;
+    if (sectionId && unlockedIds.has(sectionId)) {
+      revealTimelineForSection(sectionId);
+    } else {
+      li.classList.add("timeline__item--pending");
+      li.classList.remove("is-unlocked", "is-visible");
     }
   });
 }
@@ -940,9 +966,9 @@ function initTimeline() {
 
   ACTIVITIES.forEach((item, i) => {
     const li = document.createElement("li");
-    li.className = "timeline__item reveal-on-scroll";
-    li.dataset.unlockAt = getActivityUnlockTime(item);
-    li.style.transitionDelay = `${i * 0.12}s`;
+    li.className = "timeline__item timeline__item--pending";
+    li.dataset.sectionId = item.sectionId || "";
+    li.setAttribute("aria-hidden", "false");
     li.innerHTML = `
       <span class="timeline__dot" aria-hidden="true"></span>
       <p class="timeline__time">${item.time}</p>
@@ -954,7 +980,7 @@ function initTimeline() {
     list.appendChild(li);
   });
 
-  checkTimelineUnlocks();
+  syncTimelineToUnlockedSections();
 }
 
 function initLetter() {
@@ -1054,7 +1080,7 @@ function closeGiftModal() {
 
 let scrollObserver;
 
-function observeScrollReveals(root = document) {
+function observeScrollReveals(root = document, { excludeTimeline = false } = {}) {
   if (!scrollObserver) {
     scrollObserver = new IntersectionObserver(
       (entries) => {
@@ -1069,7 +1095,11 @@ function observeScrollReveals(root = document) {
     );
   }
 
-  root.querySelectorAll(".reveal-on-scroll:not(.is-visible)").forEach((el) => {
+  const selector = excludeTimeline
+    ? ".reveal-on-scroll:not(.is-visible):not(.timeline__item)"
+    : ".reveal-on-scroll:not(.is-visible)";
+
+  root.querySelectorAll(selector).forEach((el) => {
     scrollObserver.observe(el);
   });
 }
