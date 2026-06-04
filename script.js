@@ -7,6 +7,11 @@
    CONFIGURACIÓN — Personaliza fechas y horarios
    ========================================================================== */
 
+const PRODUCTION_UNLOCK = {
+  dressCodeUnlock: "2026-06-04T08:00:00",
+  birthdayDate: "2026-06-15",
+};
+
 const CONFIG = {
   /** false = ver todo el diseño sin bloqueo */
   enableTimeLock: true,
@@ -14,14 +19,21 @@ const CONFIG = {
   /** Zona horaria para todos los desbloqueos */
   timeZone: "America/Mexico_City",
 
-  /** Fecha del cumpleaños (YYYY-MM-DD) — horarios del plan aplican este día */
-  birthdayDate: "2026-06-15",
+  /** Horarios reales (se usan cuando testMinuteUnlock.enabled = false) */
+  ...PRODUCTION_UNLOCK,
 
-  /** Dress code: 4 de junio, 8:00 AM (hora Ciudad de México) */
-  dressCodeUnlock: "2026-06-04T08:00:00",
+  /**
+   * PRUEBA: una sección cada minuto desde el 4 jun 12:45 AM (CDMX).
+   * Cuando termines, pon enabled: false para volver a producción.
+   */
+  testMinuteUnlock: {
+    enabled: true,
+    start: "2026-06-04T00:45:00",
+    intervalMinutes: 1,
+  },
 
-  /** Revisar desbloqueos cada N ms */
-  checkIntervalMs: 5000,
+  /** Revisar desbloqueos (más seguido en modo prueba) */
+  checkIntervalMs: 10000,
 
   /** Nombres amigables para el toast al desbloquear */
   sectionLabels: {
@@ -56,10 +68,56 @@ function parseTime12hToHms(time12) {
   return `${String(hour).padStart(2, "0")}:${minute}:00`;
 }
 
-function buildUnlockSchedule() {
-  const entries = [
-    { id: "dresscode", unlockTime: CONFIG.dressCodeUnlock },
-  ];
+const TEST_SECTION_ORDER = [
+  "dresscode",
+  "activities",
+  "gifts",
+  "gokarts",
+  "cena",
+  "cancion",
+  "finalLetter",
+];
+
+function isTestMinuteMode() {
+  return Boolean(CONFIG.testMinuteUnlock?.enabled);
+}
+
+function getDressCodeUnlockTime() {
+  if (isTestMinuteMode()) return CONFIG.testMinuteUnlock.start;
+  return CONFIG.dressCodeUnlock;
+}
+
+function addMinutesToScheduleIso(isoLocal, minutesToAdd) {
+  const baseMs = parseScheduleDateTime(isoLocal);
+  const target = new Date(baseMs + minutesToAdd * 60 * 1000);
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: CONFIG.timeZone || "America/Mexico_City",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+    })
+      .formatToParts(target)
+      .filter((p) => p.type !== "literal")
+      .map((p) => [p.type, p.value])
+  );
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`;
+}
+
+function buildTestMinuteSchedule() {
+  const { start, intervalMinutes = 1 } = CONFIG.testMinuteUnlock;
+  return TEST_SECTION_ORDER.map((id, index) => ({
+    id,
+    unlockTime: addMinutesToScheduleIso(start, index * intervalMinutes),
+  }));
+}
+
+function buildProductionSchedule() {
+  const entries = [{ id: "dresscode", unlockTime: CONFIG.dressCodeUnlock }];
 
   ACTIVITIES.forEach((item) => {
     if (item.sectionId === "activities") {
@@ -83,6 +141,11 @@ function buildUnlockSchedule() {
     seen.add(entry.id);
     return true;
   });
+}
+
+function buildUnlockSchedule() {
+  if (isTestMinuteMode()) return buildTestMinuteSchedule();
+  return buildProductionSchedule();
 }
 
 /* ==========================================================================
@@ -338,7 +401,7 @@ function getNowInScheduleTz() {
 function isBeforeDressCodeUnlock() {
   if (isDebug || forceBirthday) return false;
   if (forcePreview) return false;
-  return getNowInScheduleTz() < parseScheduleDateTime(CONFIG.dressCodeUnlock);
+  return getNowInScheduleTz() < parseScheduleDateTime(getDressCodeUnlockTime());
 }
 
 function isTimeLockActive() {
@@ -409,6 +472,10 @@ function checkUnlocks() {
 }
 
 function getActivityUnlockTime(item) {
+  if (isTestMinuteMode() && item.sectionId) {
+    const entry = schedule.find((e) => e.id === item.sectionId);
+    if (entry) return entry.unlockTime;
+  }
   return `${CONFIG.birthdayDate}T${parseTime12hToHms(item.time)}`;
 }
 
@@ -1119,6 +1186,17 @@ function init() {
     unlockAllSections();
     updateScrollHint();
   } else {
+    if (isTestMinuteMode()) {
+      console.info(
+        "[Cosmia] Modo prueba activo — 1 sección por minuto desde",
+        CONFIG.testMinuteUnlock.start,
+        "(CDMX). Pon testMinuteUnlock.enabled: false para producción."
+      );
+      schedule.forEach((entry) => {
+        console.info(`  · ${entry.id} → ${entry.unlockTime}`);
+      });
+    }
+
     document.querySelectorAll("[data-unlock-id]").forEach((el) => {
       el.classList.add("section--locked");
     });
