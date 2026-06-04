@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8e8f0" />
+  <meta name="description" content="Cosmia — una experiencia para ti ✨" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+  <title>Cosmia ✨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Partículas flotantes -->
+  <canvas id="particles" aria-hidden="true"></canvas>
+
+  <!-- Barra de progreso sutil (secciones desbloqueadas) -->
+  <div class="unlock-progress" id="unlockProgress" aria-hidden="true">
+    <div class="unlock-progress__fill" id="unlockProgressFill"></div>
+  </div>
+
+  <main class="cosmia" id="cosmiaMain">
+    <!-- ========== HERO (siempre visible) ========== -->
+    <section class="section section--hero" id="hero" data-section="hero">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="hero__content reveal">
+        <p class="hero__eyebrow">Un regalo hecho con amor</p>
+        <h1 class="hero__title">Cosmia</h1>
+        <p class="hero__subtitle">Felices 28</p>
+        <div class="hero__divider" aria-hidden="true"></div>
+        <p class="hero__tagline">Tu historia comienza aquí ✨</p>
+      </div>
+      <a href="#dresscode" class="hero__scroll-hint" id="scrollHint" aria-label="Desplázate hacia abajo">
+        <span class="hero__scroll-dot"></span>
+      </a>
+    </section>
+
+    <!-- ========== DRESS CODE ========== -->
+    <section
+      class="section"
+      id="dresscode"
+      data-section="dresscode"
+      data-unlock-id="dresscode"
+      aria-labelledby="dresscode-title"
+    >
+      <div class="section__inner">
+        <header class="section__header reveal-on-scroll">
+          <span class="section__label">Primera pista</span>
+          <h2 class="section__title" id="dresscode-title">Dress Code</h2>
+          <p class="section__desc">Elige tu vibra para esta día especial</p>
+        </header>
+
+        <div class="dress-cards">
+          <article class="glass-card dress-card reveal-on-scroll" tabindex="0">
+            <div class="dress-card__icon" aria-hidden="true">✦</div>
+            <h3 class="dress-card__name">Formal</h3>
+            <p class="dress-card__vibe">Elegant soft glam</p>
+            <p class="dress-card__subtitle">Opción ideal</p>
+            <ul class="dress-card__list">
+              <li>Vestido midi o corto elegante (negro, vino, verde esmeralda o rosa profundo)</li>
+              <li>O conjunto top + falda satinada</li>
+              <li>Sandalias de tacón medio o tacón bloque — cómodo para caminar</li>
+              <li>Blazer ligero opcional si hace frío</li>
+            </ul>
+            <div class="dress-card__block">
+              <p class="dress-card__block-title">✨ Detalles clave</p>
+              <ul class="dress-card__list dress-card__list--compact">
+                <li>Maquillaje: glow natural + labios suaves o vino</li>
+                <li>Cabello: suelto con ondas o recogido elegante</li>
+                <li>Perfume ligero pero memorable</li>
+              </ul>
+            </div>
+            <div class="dress-card__block">
+              <p class="dress-card__block-title">💎 Accesorios</p>
+              <ul class="dress-card__list dress-card__list--compact">
+                <li>Aretes dorados o plateados delicados</li>
+                <li>Bolsa pequeña elegante (clutch o mini bag)</li>
+              </ul>
+            </div>
+            <span class="dress-card__tag">Glamour íntimo</span>
+          </article>
+
+          <article class="glass-card dress-card reveal-on-scroll" tabindex="0">
+            <div class="dress-card__icon" aria-hidden="true">☽</div>
+            <h3 class="dress-card__name">Cómodo</h3>
+            <p class="dress-card__vibe">Cute sporty</p>
+            <p class="dress-card__subtitle">Opción ideal</p>
+            <ul class="dress-card__list">
+              <li>Top ajustado o crop top (blanco, rosa pastel o negro)</li>
+              <li>Overshirt ligera — camisa abierta tipo oversized en blanco o denim</li>
+              <li>Jeans skinny o leggings negros</li>
+              <li>Tenis cómodos (Nike Air Force, Adidas Samba o similares)</li>
+              <li>Cabello recogido (cola alta o trenza)</li>
+            </ul>
+            <div class="dress-card__block">
+              <p class="dress-card__block-title">✨ Accesorios</p>
+              <ul class="dress-card__list dress-card__list--compact">
+                <li>Lentes de sol pequeños (estilo aesthetic)</li>
+                <li>Aretes discretos</li>
+                <li>Mochila pequeña o crossbody</li>
+              </ul>
+            </div>
+            <span class="dress-card__tag">Abrazo en tela</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== EL PLAN ========== -->
+    <section
+      class="section"
+      id="activities"
+      data-section="activities"
+      data-unlock-id="activities"
+      aria-labelledby="activities-title"
+    >
+      <div class="section__inner">
+        <header class="section__header reveal-on-scroll">
+          <span class="section__label">El plan</span>
+          <h2 class="section__title" id="activities-title">El plan</h2>
+          <p class="section__desc">Así viviremos tu día — cada momento, a su tiempo</p>
+        </header>
+
+        <ol class="timeline" id="timeline">
+          <!-- Generado desde ACTIVITIES en script.js -->
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========== REGALOS ========== -->
+    <section
+      class="section"
+      id="gifts"
+      data-section="gifts"
+      data-unlock-id="gifts"
+      aria-labelledby="gifts-title"
+    >
+      <div class="section__inner">
+        <header class="section__header reveal-on-scroll">
+          <span class="section__label">Para ti</span>
+          <h2 class="section__title" id="gifts-title">Tus regalos</h2>
+          <p class="section__desc">Cada detalle tiene un porqué — toca para descubrirlo</p>
+        </header>
+
+        <div class="gift-grid" id="giftGrid">
+          <button type="button" class="gift-card glass-card reveal-on-scroll" data-gift="flowers" aria-expanded="false">
+            <span class="gift-card__emoji" aria-hidden="true">🌹</span>
+            <span class="gift-card__label">Flores rosas</span>
+            <span class="gift-card__hint">Toca para leer</span>
+          </button>
+          <button type="button" class="gift-card glass-card reveal-on-scroll" data-gift="box" aria-expanded="false">
+            <span class="gift-card__emoji" aria-hidden="true">📦</span>
+            <span class="gift-card__label">Cajita sorpresa</span>
+            <span class="gift-card__hint">Toca para leer</span>
+          </button>
+          <button type="button" class="gift-card glass-card reveal-on-scroll" data-gift="hoodie" aria-expanded="false">
+            <span class="gift-card__emoji" aria-hidden="true">👕</span>
+            <span class="gift-card__label">Playera Taylor Swift</span>
+            <span class="gift-card__hint">Toca para leer</span>
+          </button>
+          <button type="button" class="gift-card glass-card reveal-on-scroll" data-gift="shirt" aria-expanded="false">
+            <span class="gift-card__emoji" aria-hidden="true">🧥</span>
+            <span class="gift-card__label">Sudadera Justin Bieber</span>
+            <span class="gift-card__hint">Toca para leer</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal de regalo -->
+    <div class="gift-modal" id="giftModal" role="dialog" aria-modal="true" aria-labelledby="giftModalTitle" hidden>
+      <div class="gift-modal__backdrop" data-close-modal></div>
+      <div class="gift-modal__panel glass-card">
+        <button type="button" class="gift-modal__close" data-close-modal aria-label="Cerrar">×</button>
+        <span class="gift-modal__emoji" id="giftModalEmoji" aria-hidden="true"></span>
+        <h3 class="gift-modal__title" id="giftModalTitle"></h3>
+        <p class="gift-modal__body" id="giftModalBody"></p>
+      </div>
+    </div>
+
+    <!-- ========== GO KARTS ========== -->
+    <section
+      class="section"
+      id="gokarts"
+      data-section="gokarts"
+      data-unlock-id="gokarts"
+      aria-labelledby="gokarts-title"
+    >
+      <div class="section__inner">
+        <header class="section__header reveal-on-scroll">
+          <span class="section__label">Experiencia</span>
+          <h2 class="section__title" id="gokarts-title">Go Karts</h2>
+          <p class="section__desc" id="gokarts-desc"></p>
+        </header>
+        <article class="experience-card glass-card reveal-on-scroll" id="gokartsContent"></article>
+      </div>
+    </section>
+
+    <!-- ========== CENA ========== -->
+    <section
+      class="section"
+      id="cena"
+      data-section="cena"
+      data-unlock-id="cena"
+      aria-labelledby="cena-title"
+    >
+      <div class="section__inner">
+        <header class="section__header reveal-on-scroll">
+          <span class="section__label">Experiencia</span>
+          <h2 class="section__title" id="cena-title">Cena</h2>
+          <p class="section__desc" id="cena-desc"></p>
+        </header>
+        <article class="experience-card glass-card reveal-on-scroll" id="cenaContent"></article>
+      </div>
+    </section>
+
+    <!-- ========== CANCIÓN ========== -->
+    <section
+      class="section"
+      id="cancion"
+      data-section="cancion"
+      data-unlock-id="cancion"
+      aria-labelledby="cancion-title"
+    >
+      <div class="section__inner">
+        <header class="section__header reveal-on-scroll">
+          <span class="section__label">Hecha con amor</span>
+          <h2 class="section__title" id="cancion-title">Canción</h2>
+          <p class="section__desc" id="lyricsSongName">— Agrega el nombre de la canción en script.js —</p>
+        </header>
+
+        <div class="lyric-stage glass-card">
+          <!-- Coloca tu archivo en audio/cosmia.mp3 (también sirve .mp3) -->
+          <audio id="songAudio" class="song-audio" preload="metadata"></audio>
+
+          <button type="button" class="lyric-play" id="lyricPlayBtn" aria-label="Reproducir canción">
+            <span class="lyric-play__ring" aria-hidden="true"></span>
+            <span class="lyric-play__icon lyric-play__icon--play" aria-hidden="true"></span>
+          </button>
+
+          <div class="audio-player" id="audioPlayer">
+            <div class="audio-player__meta">
+              <span class="audio-player__status" id="audioStatus">Escuchar Cosmia</span>
+              <span class="audio-player__time" id="audioTime" hidden>0:00 / 0:00</span>
+            </div>
+            <input
+              type="range"
+              class="audio-player__seek"
+              id="audioSeek"
+              min="0"
+              max="100"
+              value="0"
+              step="0.1"
+              aria-label="Progreso de la canción"
+              disabled
+            />
+            <p class="audio-player__hint" id="audioHint">
+              Agrega tu archivo en <code>audio/cosmia.mp3</code>
+            </p>
+          </div>
+
+          <div class="lyric-scroll" id="lyricScroll">
+            <div class="lyric-lines" id="lyricLines" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CARTA ========== -->
+    <section
+      class="section section--letter"
+      id="finalLetter"
+      data-section="finalLetter"
+      data-unlock-id="finalLetter"
+      aria-labelledby="letter-title"
+    >
+      <div class="section__inner section__inner--letter">
+        <header class="section__header reveal-on-scroll">
+          <span class="section__label">Para cerrar con el corazón</span>
+          <h2 class="section__title section__title--script" id="letter-title">Carta</h2>
+        </header>
+
+        <article class="letter-card glass-card" id="letterContent">
+          <!-- Edita FINAL_LETTER.paragraphs en script.js -->
+        </article>
+
+        <p class="letter-sign">Con todo mi amor — Brayan Olivares ✨</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast de desbloqueo -->
+  <div class="unlock-toast" id="unlockToast" role="status" aria-live="polite" hidden>
+    <span class="unlock-toast__icon" aria-hidden="true">✨</span>
+    <span class="unlock-toast__text" id="unlockToastText"></span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
